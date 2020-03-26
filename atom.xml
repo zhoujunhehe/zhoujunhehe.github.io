@@ -1,45 +1,226 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zhoujunhehe.github.io</id>
-    <title>Gridea</title>
-    <updated>2020-03-26T06:10:32.981Z</updated>
+    <title>Ember&apos;s Blog</title>
+    <updated>2020-03-26T06:44:11.295Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zhoujunhehe.github.io"/>
     <link rel="self" href="https://zhoujunhehe.github.io/atom.xml"/>
-    <subtitle>温故而知新</subtitle>
+    <subtitle>别来无恙</subtitle>
     <logo>https://zhoujunhehe.github.io/images/avatar.png</logo>
     <icon>https://zhoujunhehe.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2020, Gridea</rights>
+    <rights>All rights reserved 2020, Ember&apos;s Blog</rights>
     <entry>
-        <title type="html"><![CDATA[Hello Gridea]]></title>
-        <id>https://zhoujunhehe.github.io/post/hello-gridea/</id>
-        <link href="https://zhoujunhehe.github.io/post/hello-gridea/">
+        <title type="html"><![CDATA[【拾遗】仿微信在对话框文字中插入Emoji表情包]]></title>
+        <id>https://zhoujunhehe.github.io/post/shi-yi-fang-wei-xin-zai-dui-hua-kuang-wen-zi-zhong-cha-ru-emoji-biao-qing-bao/</id>
+        <link href="https://zhoujunhehe.github.io/post/shi-yi-fang-wei-xin-zai-dui-hua-kuang-wen-zi-zhong-cha-ru-emoji-biao-qing-bao/">
         </link>
-        <updated>2018-12-11T16:00:00.000Z</updated>
-        <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-<!-- more -->
-<p><a href="https://github.com/getgridea/gridea">Github</a><br>
-<a href="https://gridea.dev/">Gridea 主页</a><br>
-<a href="http://fehey.com/">示例网站</a></p>
-<h2 id="特性">特性👇</h2>
-<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
-<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
-<p>🏷️  你可以对文章进行标签分组</p>
-<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
-<p>💻  你可以在 <strong>Windows</strong>，<strong>MacOS</strong> 或 <strong>Linux</strong> 设备上使用此客户端</p>
-<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
-<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
-<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
-<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
-<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
-<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前 🏃</p>
-<p>未来，它一定会成为你离不开的伙伴</p>
-<p>尽情发挥你的才华吧！</p>
-<p>😘 Enjoy~</p>
+        <updated>2020-03-26T06:43:39.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="场景">场景</h2>
+<p>类似于微信聊天的一个对话框,要求可以使用EMOJI表情,对话框是一个div,通过改变contentEditable属性使得内容可以编辑.</p>
+<h2 id="问题">问题</h2>
+<p>Emoji表情在页面中其实是GIF格式的IMG标签.如果直接在innerHTML中改变,会导致表情包只出现在文本最后,所以这样是不符合用户体验的,需要跟踪光标的位置.在用户点击文本或者文本框失去焦点时候保存光标位置,点击表情时在光标最后位置插入.<br>
+<del>div.innerHTML +=  <img/></del></p>
+<h2 id="思路">思路##</h2>
+<p>1.webkit内核的浏览器中可以直接使用getSelection()获取<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Selection">selection</a>对象.以及其中的range对象</p>
+<blockquote>
+<p>range(范围)指的是文档中连续的一部分。一个范围包括整个节点，也可以包含节点的一部分，例如文本节点的一部分。用户通常下只能选择一个范围</p>
+</blockquote>
+<pre><code>var selObj = window.getSelection();
+var range  = selObj.getRangeAt(0);
+</code></pre>
+<p>在div的onclick以及onblur事件中绑定保存光标位置</p>
+<pre><code>saveSelection() {
+    this.lastEditRange = window.getSelection().getRangeAt(0);
+}
+</code></pre>
+<p>2.在添加表情事件触发时,首先检查是否存在光标位置,如果存在则在最后位置插入,不存在就在文本末尾插入</p>
+<pre><code>   // 判断是否有最后光标对象存在
+        if (this.lastEditRange) {
+            // 存在最后光标对象，选定对象清除所有光标并添加最后光标还原之前的状态
+            selection.removeAllRanges()
+            selection.addRange(this.lastEditRange)
+        }
+</code></pre>
+<p>3.最后就是对光标位置的处理</p>
+<pre><code>   // 如果是文本节点则先获取光标对象
+            var range = selection.getRangeAt(0)
+            // 获取光标对象的范围界定对象，一般就是textNode对象
+            var frag;
+            if (range.createContextualFragment) {
+                frag = range.createContextualFragment(emojiInput);
+            } else {
+                var container = document.createElement(&quot;div&quot;);
+                container.innerHTML = emojiInput;
+                frag = document.createDocumentFragment();
+                var child;
+                var title;
+                for (; child = container.firstChild;) {
+                    title = frag.appendChild(child);
+                }
+            }
+            var node = frag.lastChild;
+            range.insertNode(frag);
+            range.setStartAfter(node);
+            selection.removeAllRanges();
+            selection.addRange(range);
+</code></pre>
+<p>4.最后还是要保存一次光标位置.</p>
+<h2 id="效果展示">效果展示</h2>
+<figure data-type="image" tabindex="1"><img src="/img/bVbffDu" alt="c0c20734gy1fu82wtb38zg20hs08wkjm.gif" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[【拾遗】antd design pro框架的菜单与路由从单个权限改造成支持多个权限]]></title>
+        <id>https://zhoujunhehe.github.io/post/shi-yi-antd-design-pro-kuang-jia-de-cai-dan-yu-lu-you-cong-dan-ge-quan-xian-gai-zao-cheng-zhi-chi-duo-ge-quan-xian/</id>
+        <link href="https://zhoujunhehe.github.io/post/shi-yi-antd-design-pro-kuang-jia-de-cai-dan-yu-lu-you-cong-dan-ge-quan-xian-gai-zao-cheng-zhi-chi-duo-ge-quan-xian/">
+        </link>
+        <updated>2020-03-26T06:42:26.000Z</updated>
+        <content type="html"><![CDATA[<p>框架原生权限控制 https://pro.ant.design/docs/authority-management-cn</p>
+<h2 id="原生权限控制">原生权限控制</h2>
+<blockquote>
+<p>控制菜单显示#<br>
+如需对某些菜单进行权限控制，只须对菜单配置文件 menu.js 中的菜单项设置 authority 属性即可，代表该项菜单的准入权限，菜单生成文件中会默认调用 Authorized.check 进行判断处理。</p>
+</blockquote>
+<pre><code>{
+  name: '表单页',
+  icon: 'form',
+  path: 'form',
+  children: [{
+    name: '基础表单',
+    path: 'basic-form',
+  }, {
+    name: '分步表单',
+    path: 'step-form',
+  }, {
+    name: '高级表单',
+    authority: 'admin', // 配置准入权限
+    path: 'advanced-form',
+  }],
+}
+</code></pre>
+<ol>
+<li>
+<p>在登入的时候 会调用 <code>models/login.js</code> 里的<code>changeLoginStatus</code>改变登入信息，<code>setAuthority(&quot;admin&quot;);</code> 改方法的具体实现是<code>localStorage.setItem('antd-pro-authority', authority);</code></p>
+</li>
+<li>
+<p>改变登入信息后调用<code>reloadAuthorized()</code>刷新权限</p>
+</li>
+<li>
+<p>在<code>component/Authorized</code>中，会将当前的权限当做<code>CURRENT</code> export</p>
+</li>
+<li>
+<p>同级目录下有<code>checkPerMissions.js</code>的<code>check</code>方法用来匹配当前权限和菜单权限</p>
+</li>
+<li>
+<p><code>Authorized</code>组件的<code>authority</code>属性支持的<code>string | array | Promise | (currentAuthority) =&gt; boolean</code>,而菜单中配置的值是<code>string</code>,原处理函数</p>
+</li>
+</ol>
+<pre><code>  if (typeof authority === 'string') {
+    if (authority === currentAuthority) {
+      return target;
+    }
+    return Exception;
+  }
+</code></pre>
+<ol start="6">
+<li>当<code>setAuthority</code>里设置的值与菜单中的<code>authority</code>相匹配的时候，该菜单的内容就会显示，具体实现不是这篇文章需要关心的。</li>
+<li>但是LocalStorage 只支持<code>string</code>,不支持数组类型，所以权限控制起来并不灵活.因为项目需要，就将代码改造了一下。</li>
+</ol>
+<h1 id="改造过程">改造过程</h1>
+<ol>
+<li>
+<p>当前登入的权限还是存在<code>LocalStorage</code>中，多个权限由逗号拼接 'admin,user,user2'</p>
+</li>
+<li>
+<p>上面第三步将分割字符串成数组</p>
+</li>
+</ol>
+<pre><code>          if (currentAuthority.indexOf(&quot;,&quot;)&gt;0){
+            CURRENT = currentAuthority.split(&quot;,&quot;)
+          }else{
+            CURRENT = currentAuthority;
+          }
+</code></pre>
+<p>3.第五步中的check函数中string处理改造</p>
+<pre><code>if (Array.isArray(currentAuthority)) {
+      let flag = false
+      currentAuthority.forEach(element =&gt; {
+        if (authority===element) {
+          flag = true
+        }
+      });
+      if (flag) {
+        return target;
+      }
+    } else if (authority === currentAuthority) {
+      return target;
+    }
+</code></pre>
+<p>4.在<code>setAuthority</code>中传入<code>admin,user</code>即可</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[【拾遗】jquery validate绑定动态生成的dom失效的问题及解决方案]]></title>
+        <id>https://zhoujunhehe.github.io/post/shi-yi-jquery-validate-bang-ding-dong-tai-sheng-cheng-de-dom-shi-xiao-de-wen-ti-ji-jie-jue-fang-an/</id>
+        <link href="https://zhoujunhehe.github.io/post/shi-yi-jquery-validate-bang-ding-dong-tai-sheng-cheng-de-dom-shi-xiao-de-wen-ti-ji-jie-jue-fang-an/">
+        </link>
+        <updated>2020-03-26T06:39:22.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="1-问题的出现"><strong>1. 问题的出现</strong></h2>
+<p>jquery validate算是一个很常用的表单验证的插件，但是不能对动态生成的元素绑定验证事件<br>
+百度搜索也可以搜出一大堆类似的问题,但是没有找到解决方案，自己花了点时间解决了</p>
+<h2 id="2解决思路"><strong>2.解决思路</strong></h2>
+<figure data-type="image" tabindex="1"><img src="/img/bVVlcy" alt="图片描述" loading="lazy"></figure>
+<p>点击添加</p>
+<figure data-type="image" tabindex="2"><img src="/img/bVVldY" alt="图片描述" loading="lazy"></figure>
+<p>这里动态生成的input是做了非空的处理，然而真实情况下，点击保存还是可以直接提交空值</p>
+<figure data-type="image" tabindex="3"><img src="/img/bVVlhv" alt="clipboard.png" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="/img/bVVlh0" alt="clipboard.png" loading="lazy"></figure>
+<p>在chrome浏览器中查看事件，发现并没有keyup事件，那我就在想，有没有可能是绑定事件的时候还没有这个元素呢？于是决定用promise 改成异步</p>
+<pre><code> var promise = new Promise(function(resolve, reject) {
+                $(&quot;#tab-1 .panel-body&quot;).prepend(acc); //动态添加元素
+                resolve();
+            }).then(function(resolve) {
+                myAccValidate(GLOBAL.num); //添加绑定事件
+            })
+</code></pre>
+<p>可以看到，事件已经绑定了，但是点击提交，还是没有验证，<br>
+<img src="/img/bVVllA" alt="clipboard.png" loading="lazy"></p>
+<p>在浏览器中打个断点看下绑定事件的时候发生了什么</p>
+<figure data-type="image" tabindex="5"><img src="/img/bVVlmF" alt="clipboard.png" loading="lazy"></figure>
+<p>可以看到accSn并没有指向input，而只是个字符串，那看来是作用域的问题 ，我们把这段绑定的代码放到全局中运行</p>
+<pre><code>  var accForm = &quot;#accForm&quot;+num;
+        jQuery.globalEval(`
+        		$(&quot;${accForm}&quot;).validate({
+	    rules:{
+	    	${accSn}:{ 
+	    		required:true,
+	    		maxlength:20 
+	    	},
+	    	${accName}:{
+	    		required:true,
+	    		maxlength:20 
+	    	}
+	    },
+		message:{
+	    	${accSn}:{ 
+	    		required:&quot;不能为空&quot;,
+	    		maxlength:&quot;长度不能超过20&quot; 
+	    	},
+	    	${accName}:{
+	    		required:&quot;不能为空&quot;,
+	    		maxlength:&quot;长度不能超过20&quot; 
+	    	}
+    }
+	});
+        `)
+</code></pre>
+<figure data-type="image" tabindex="6"><img src="/img/bVVlqH" alt="clipboard.png" loading="lazy"></figure>
+<p>可以看到指向了input ，并且表单验证也生效了</p>
+<figure data-type="image" tabindex="7"><img src="/img/bVVlrM" alt="clipboard.png" loading="lazy"></figure>
+<h2 id="3-总结"><strong>3. 总结</strong></h2>
+<p>1.把生成元素和绑定事件改成异步<br>
+2.绑定事件的作用域改成全局</p>
 ]]></content>
     </entry>
 </feed>

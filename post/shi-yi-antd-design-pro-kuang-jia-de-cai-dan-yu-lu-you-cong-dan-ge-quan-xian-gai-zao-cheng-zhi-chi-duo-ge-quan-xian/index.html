@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>关于 | Ember&#39;s Blog</title>
+<title>【拾遗】antd design pro框架的菜单与路由从单个权限改造成支持多个权限 | Ember&#39;s Blog</title>
 <meta name="description" content="别来无恙">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -81,25 +81,111 @@
       <div class="sm-12 md-8 col">
         <div class="paper">
           <article class="article">
-            <h1>关于</h1>
+            <h1>【拾遗】antd design pro框架的菜单与路由从单个权限改造成支持多个权限</h1>
             <p class="article-meta">
-              2019-01-25
+              2020-03-26
               
             </p>
             
             <div class="post-content">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+              <p>框架原生权限控制 https://pro.ant.design/docs/authority-management-cn</p>
+<h2 id="原生权限控制">原生权限控制</h2>
+<blockquote>
+<p>控制菜单显示#<br>
+如需对某些菜单进行权限控制，只须对菜单配置文件 menu.js 中的菜单项设置 authority 属性即可，代表该项菜单的准入权限，菜单生成文件中会默认调用 Authorized.check 进行判断处理。</p>
 </blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+<pre><code>{
+  name: '表单页',
+  icon: 'form',
+  path: 'form',
+  children: [{
+    name: '基础表单',
+    path: 'basic-form',
+  }, {
+    name: '分步表单',
+    path: 'step-form',
+  }, {
+    name: '高级表单',
+    authority: 'admin', // 配置准入权限
+    path: 'advanced-form',
+  }],
+}
+</code></pre>
+<ol>
+<li>
+<p>在登入的时候 会调用 <code>models/login.js</code> 里的<code>changeLoginStatus</code>改变登入信息，<code>setAuthority(&quot;admin&quot;);</code> 改方法的具体实现是<code>localStorage.setItem('antd-pro-authority', authority);</code></p>
+</li>
+<li>
+<p>改变登入信息后调用<code>reloadAuthorized()</code>刷新权限</p>
+</li>
+<li>
+<p>在<code>component/Authorized</code>中，会将当前的权限当做<code>CURRENT</code> export</p>
+</li>
+<li>
+<p>同级目录下有<code>checkPerMissions.js</code>的<code>check</code>方法用来匹配当前权限和菜单权限</p>
+</li>
+<li>
+<p><code>Authorized</code>组件的<code>authority</code>属性支持的<code>string | array | Promise | (currentAuthority) =&gt; boolean</code>,而菜单中配置的值是<code>string</code>,原处理函数</p>
+</li>
+</ol>
+<pre><code>  if (typeof authority === 'string') {
+    if (authority === currentAuthority) {
+      return target;
+    }
+    return Exception;
+  }
+</code></pre>
+<ol start="6">
+<li>当<code>setAuthority</code>里设置的值与菜单中的<code>authority</code>相匹配的时候，该菜单的内容就会显示，具体实现不是这篇文章需要关心的。</li>
+<li>但是LocalStorage 只支持<code>string</code>,不支持数组类型，所以权限控制起来并不灵活.因为项目需要，就将代码改造了一下。</li>
+</ol>
+<h1 id="改造过程">改造过程</h1>
+<ol>
+<li>
+<p>当前登入的权限还是存在<code>LocalStorage</code>中，多个权限由逗号拼接 'admin,user,user2'</p>
+</li>
+<li>
+<p>上面第三步将分割字符串成数组</p>
+</li>
+</ol>
+<pre><code>          if (currentAuthority.indexOf(&quot;,&quot;)&gt;0){
+            CURRENT = currentAuthority.split(&quot;,&quot;)
+          }else{
+            CURRENT = currentAuthority;
+          }
+</code></pre>
+<p>3.第五步中的check函数中string处理改造</p>
+<pre><code>if (Array.isArray(currentAuthority)) {
+      let flag = false
+      currentAuthority.forEach(element =&gt; {
+        if (authority===element) {
+          flag = true
+        }
+      });
+      if (flag) {
+        return target;
+      }
+    } else if (authority === currentAuthority) {
+      return target;
+    }
+</code></pre>
+<p>4.在<code>setAuthority</code>中传入<code>admin,user</code>即可</p>
 
             </div>
           </article>
         </div>
         <div class="paper" data-aos="fade-in">
+          
+            <div class="next-post">
+              <div class="next">
+                下一篇
+              </div>
+              <a href="https://zhoujunhehe.github.io/post/shi-yi-jquery-validate-bang-ding-dong-tai-sheng-cheng-de-dom-shi-xiao-de-wen-ti-ji-jie-jue-fang-an/">
+                <h3 class="post-title">
+                  【拾遗】jquery validate绑定动态生成的dom失效的问题及解决方案
+                </h3>
+              </a>
+            </div>
           
         </div>
         

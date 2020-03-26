@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>关于 | Ember&#39;s Blog</title>
+<title>【拾遗】jquery validate绑定动态生成的dom失效的问题及解决方案 | Ember&#39;s Blog</title>
 <meta name="description" content="别来无恙">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -81,20 +81,68 @@
       <div class="sm-12 md-8 col">
         <div class="paper">
           <article class="article">
-            <h1>关于</h1>
+            <h1>【拾遗】jquery validate绑定动态生成的dom失效的问题及解决方案</h1>
             <p class="article-meta">
-              2019-01-25
+              2020-03-26
               
             </p>
             
             <div class="post-content">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+              <h2 id="1-问题的出现"><strong>1. 问题的出现</strong></h2>
+<p>jquery validate算是一个很常用的表单验证的插件，但是不能对动态生成的元素绑定验证事件<br>
+百度搜索也可以搜出一大堆类似的问题,但是没有找到解决方案，自己花了点时间解决了</p>
+<h2 id="2解决思路"><strong>2.解决思路</strong></h2>
+<figure data-type="image" tabindex="1"><img src="/img/bVVlcy" alt="图片描述" loading="lazy"></figure>
+<p>点击添加</p>
+<figure data-type="image" tabindex="2"><img src="/img/bVVldY" alt="图片描述" loading="lazy"></figure>
+<p>这里动态生成的input是做了非空的处理，然而真实情况下，点击保存还是可以直接提交空值</p>
+<figure data-type="image" tabindex="3"><img src="/img/bVVlhv" alt="clipboard.png" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="/img/bVVlh0" alt="clipboard.png" loading="lazy"></figure>
+<p>在chrome浏览器中查看事件，发现并没有keyup事件，那我就在想，有没有可能是绑定事件的时候还没有这个元素呢？于是决定用promise 改成异步</p>
+<pre><code> var promise = new Promise(function(resolve, reject) {
+                $(&quot;#tab-1 .panel-body&quot;).prepend(acc); //动态添加元素
+                resolve();
+            }).then(function(resolve) {
+                myAccValidate(GLOBAL.num); //添加绑定事件
+            })
+</code></pre>
+<p>可以看到，事件已经绑定了，但是点击提交，还是没有验证，<br>
+<img src="/img/bVVllA" alt="clipboard.png" loading="lazy"></p>
+<p>在浏览器中打个断点看下绑定事件的时候发生了什么</p>
+<figure data-type="image" tabindex="5"><img src="/img/bVVlmF" alt="clipboard.png" loading="lazy"></figure>
+<p>可以看到accSn并没有指向input，而只是个字符串，那看来是作用域的问题 ，我们把这段绑定的代码放到全局中运行</p>
+<pre><code>  var accForm = &quot;#accForm&quot;+num;
+        jQuery.globalEval(`
+        		$(&quot;${accForm}&quot;).validate({
+	    rules:{
+	    	${accSn}:{ 
+	    		required:true,
+	    		maxlength:20 
+	    	},
+	    	${accName}:{
+	    		required:true,
+	    		maxlength:20 
+	    	}
+	    },
+		message:{
+	    	${accSn}:{ 
+	    		required:&quot;不能为空&quot;,
+	    		maxlength:&quot;长度不能超过20&quot; 
+	    	},
+	    	${accName}:{
+	    		required:&quot;不能为空&quot;,
+	    		maxlength:&quot;长度不能超过20&quot; 
+	    	}
+    }
+	});
+        `)
+</code></pre>
+<figure data-type="image" tabindex="6"><img src="/img/bVVlqH" alt="clipboard.png" loading="lazy"></figure>
+<p>可以看到指向了input ，并且表单验证也生效了</p>
+<figure data-type="image" tabindex="7"><img src="/img/bVVlrM" alt="clipboard.png" loading="lazy"></figure>
+<h2 id="3-总结"><strong>3. 总结</strong></h2>
+<p>1.把生成元素和绑定事件改成异步<br>
+2.绑定事件的作用域改成全局</p>
 
             </div>
           </article>
