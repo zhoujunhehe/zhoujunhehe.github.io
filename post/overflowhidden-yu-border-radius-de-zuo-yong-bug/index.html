@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>关于 | Ember&#39;s Blog</title>
+<title>overflow:hidden与border-radius的作用bug | Ember&#39;s Blog</title>
 <meta name="description" content="一个前端工程师，炉石，DOTA玩家的个人博客">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -81,25 +81,43 @@
       <div class="sm-12 md-8 col">
         <div class="paper">
           <article class="article">
-            <h1>关于</h1>
+            <h1>overflow:hidden与border-radius的作用bug</h1>
             <p class="article-meta">
-              2019-01-25
+              2020-03-27
               
             </p>
             
             <div class="post-content">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+              <p>在最近的一次课件模板开发中碰到一个问题<br>
+父元素设置 overflow:hidden与border-radius,<br>
+子元素在transform的时候, overflow:hidden会失效<br>
+在低版本的浏览器中 这个现象特别普遍, 最新版本的chrome没有这个现象</p>
+<blockquote>
+<p>“无论是overflow容器还是嵌套子元素，只要有transform属性，就会hidden溢出的absolute元素。”<br>
+子元素在使用了 transform 属性后致使它改变了原有的默认维度，而这时的父元素无任何改变，仍为2d维度(css默认都为2d维度)。因此导致了子元素使用translate3d属 性后出现溢出的情况。接下来只要在原有的父元素样式中加上 transform 属性将父元素改变维度即可。</p>
 </blockquote>
-<h2 id="关于本站">🏠 关于本站</h2>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<h2 id="兴趣爱好">⛹ 兴趣爱好</h2>
-<h2 id="联系我呀">📬 联系我呀</h2>
+<pre><code> z-index: 1;
+mask-image: adial-gradient(white, black);
+transform: rotate(0deg);
+</code></pre>
+<p>在safari浏览器中 , 即使没有子元素的transform动画,也会出现这个问题,可以通过设置transform: rotate(0deg);解决</p>
+<p>幸运的是  transform在这只是用来做Y轴位移, 换个思路用TOP来位移也可以</p>
 
             </div>
           </article>
         </div>
         <div class="paper" data-aos="fade-in">
+          
+            <div class="next-post">
+              <div class="next">
+                下一篇
+              </div>
+              <a href="https://zhoujunhehe.github.io/post/shi-yi-fang-wei-xin-zai-dui-hua-kuang-wen-zi-zhong-cha-ru-emoji-biao-qing-bao/">
+                <h3 class="post-title">
+                  【拾遗】仿微信在对话框文字中插入Emoji表情包
+                </h3>
+              </a>
+            </div>
           
         </div>
         
