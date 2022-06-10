@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://zhoujunhehe.github.io</id>
+    <title>NONO</title>
+    <updated>2022-06-10T08:01:28.249Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://zhoujunhehe.github.io"/>
+    <link rel="self" href="https://zhoujunhehe.github.io/atom.xml"/>
+    <subtitle>温故而知新</subtitle>
+    <logo>https://zhoujunhehe.github.io/images/avatar.png</logo>
+    <icon>https://zhoujunhehe.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2022, NONO</rights>
+    <entry>
+        <title type="html"><![CDATA[简历]]></title>
+        <id>https://zhoujunhehe.github.io/post/jian-li/</id>
+        <link href="https://zhoujunhehe.github.io/post/jian-li/">
+        </link>
+        <updated>2022-06-10T06:30:28.000Z</updated>
+        <content type="html"><![CDATA[<blockquote>
+<h3 id="about-me">about me</h3>
+<blockquote>
+<p>姓名 周俊   6年react前端开发<br>
+手机: 15757102013  邮箱:  zhoujunqyb@gmail.com<br>
+年龄: 29  未婚<br>
+已定居杭州</p>
+</blockquote>
+</blockquote>
+<h3 id="要求">要求 :</h3>
+<p>30k  全额公积金</p>
+<h3 id="web2-项目经验">web2: 项目经验:</h3>
+<p>后台管理 动画  移动端   基于electron的系统建模桌面软件</p>
+<h3 id="web3经验">web3经验:</h3>
+<p>接触币圈时间2年 NFT6个月<br>
+拥有个人创建的交流群<br>
+了解区块链原理,钱包安全, solidity智能合约基础<br>
+参与过挖矿,DEFI, GAMEFI等等各种玩法<br>
+NFT从phantabear开始接触, 玩NFT的流水超过30eth<br>
+深入各种discord社区,参与了2个社区项目的前端开发</p>
+<h3 id="主要技术框架">主要技术框架</h3>
+<p>react web3   ether  wagmi</p>
+<p>之前参与的web3项目官网</p>
+<ol>
+<li>
+<p>https://fortunedao.io/</p>
+</li>
+<li>
+<p>https://test.crepto.xyz/</p>
+</li>
+</ol>
+<p>开发收入在6个eth左右,也结识了一帮国内外玩NFT的华人<br>
+目前熊市 主要以长期投资  freemint为主,<br>
+想在web3领域继续深耕</p>
+]]></content>
+    </entry>
+</feed>
